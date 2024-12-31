@@ -96,6 +96,9 @@ def main():
             return sorted_obj
 
         # Display the first JSON object with custom formatting for verification
+        titles = {}
+        for json_obj in output:
+            titles[json_obj["dataset"][0]['identifier']] = json_obj["dataset"][0].pop('extension.outputfile')
         print(json.dumps(format_json_with_custom_sort(output[0]), indent=4))
         should_continue = input(f"\n====> Does the above look good? [y/N]: ").upper() == 'Y'
 
@@ -105,7 +108,7 @@ def main():
 
         # Loop through each row and create a separate JSON file for each
         for obj in output:  # Iterate over the output directly
-            title = obj["dataset"][0].pop("extension.outputfile", "Untitled")  # Use "Untitled" if there's no title field
+            title = titles.get(obj["dataset"][0]["identifier"], "Untitled")
             title_safe = title.replace(" ", "_").replace("/", "_").replace("\\", "_")  # Clean the title for filenames
 
 
