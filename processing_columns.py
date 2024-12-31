@@ -1,6 +1,7 @@
-from collections_and_series import (
+from collections_and_file_types import (
     collections_to_doi_lookup,
-    series_to_doi_lookup
+    series_to_doi_lookup,
+    extension_metadata
 )
 
 import json
@@ -201,8 +202,7 @@ def publisher(json_list):
             logging.info(f"Publisher list before reversal: {publisher_list}")
             json_obj["publisher"] = recursive_func(publisher_list[::-1])
             logging.info(f"Publisher mapped successfully: {json_obj['publisher']} for row {index+1}.")
-    return json_list
-            
+    return json_list     
 
 def recursive_func(publisher_list):
     if len(publisher_list) == 0:
@@ -228,92 +228,54 @@ def recursive_func(publisher_list):
 ###################################################################
 
 def distribution(json_list):
+     # Regex pattern to match the title keys to find the file type
+    title_pattern = re.compile(r"extension\.distribution\.title\.(\d+)")
+    description_pattern = re.compile(r"extension\.distribution\.description\.(\d+)")
+    
+    # Collect keys matching the pattern
+    
     for index, json_obj in enumerate(json_list):
         parsed_doi = json_obj["identifier"]
-        
-        # Regex pattern to match the title keys
-        title_pattern = re.compile(r"extension\.distribution\.title\.(\d+)")
-        
-        # Collect keys matching the pattern
         title_keys = [key for key in json_obj.keys() if title_pattern.match(key)]
-        
+        description_keys = {match.group(1): key for key in json_obj.keys() if (match := description_pattern.match(key))}
+               
         for key in title_keys:
             match = title_pattern.match(key)
             if match:
                 distribution_index = match.group(1)  # Extract the number after 'title.'
                 title = json_obj[key]  # Get the file name
                 
-                # Create a distribution object
-                distribution_obj = {
-                    "@type": "dcat:Distribution",
-                    "accessURL": parsed_doi,
-                    "title": title,
-                }
-                
-                # Extract the file extension and assign metadata
                 extension = title.split(".")[-1].lower()
-                if extension == "csv":
-                    distribution_obj["format"] = "CSV"
-                    distribution_obj["mediaType"] = "text/csv"
-                    distribution_obj["description"] = "CSV dataset file."
-                elif extension == "txt":
-                    distribution_obj["format"] = "TXT"
-                    distribution_obj["mediaType"] = "text/plain"
-                    distribution_obj["description"] = "Plain text file."
-                elif extension == "pdf":
-                    distribution_obj["format"] = "PDF"
-                    distribution_obj["mediaType"] = "application/pdf"
-                    distribution_obj["description"] = "PDF files for dataset."
-                elif extension == "xlsx":
-                    distribution_obj["format"] = "XLSX"
-                    distribution_obj["mediaType"] = "application/vnd.ms-excel"
-                    distribution_obj["description"] = "XLSX dataset files for the project."
-                elif extension == "md":
-                    distribution_obj["format"] = "MD"
-                    distribution_obj["mediaType"] = "text/markdown"
-                    distribution_obj["description"] = "Markdown documentation file for the dataset."
-                elif extension == "pptx":
-                    distribution_obj["format"] = "PPTX"
-                    distribution_obj["mediaType"] = "application/vnd.ms-powerpoint"
-                    distribution_obj["description"] = "PowerPoint file for the project."
-                elif extension == "docx":
-                    distribution_obj["format"] = "DOCX"
-                    distribution_obj["mediaType"] = "application/msword"
-                    distribution_obj["description"] = "Microsoft Word documentation file for the dataset."
-                elif extension == "cpg":
-                    distribution_obj["format"] = "CPG"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "GIS project component file."
-                elif extension == "dbf":
-                    distribution_obj["format"] = "DBF"
-                    distribution_obj["mediaType"] = "application/dbf"
-                    distribution_obj["description"] = "GIS project component file."
-                elif extension == "prj":
-                    distribution_obj["format"] = "PRJ"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file contains projection information for GIS datasets."
-                elif extension == "sbn":
-                    distribution_obj["format"] = "SBN"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file is associated with spatial index files for Esri shapefiles."
-                elif extension == "sbx":
-                    distribution_obj["format"] = "SBX"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file is associated with spatial index files for Esri shapefiles."
-                elif extension == "shp":
-                    distribution_obj["format"] = "SHP"
-                    distribution_obj["mediaType"] = "application/x-esri-shapefile"
-                    distribution_obj["description"] = "This file represents the actual geometries of a shapefile dataset."
+                
+                metadata = extension_metadata.get(extension)
+                if metadata:
+                    distribution_obj = {
+                        "@type": "dcat:Distribution",
+                        "accessURL": parsed_doi,
+                        "description": metadata["defaultDescription"], 
+                        "format": metadata["format"],
+                        "mediaType": metadata["mediaType"],
+                        "title": title,
+                    }
+                
+                    # Check if description in CSV
+                    description_key = description_keys.get(distribution_index)
+                    if description_key and json_obj.get(description_key): # "extension.description.${description_key}"
+                        print("description key is !! ", description_key, json_obj.get(description_key))
+                        distribution_obj["description"] = json_obj[description_key]
+                    
+                    # Adding distribution from spreadsheet
+                    json_obj.setdefault("distribution", []).append(distribution_obj)
+                    logging.info(f"Distribution mapped for title key {key} in row {index + 1}.")
                 else:
                     logging.warn(f"Format not mapped for {title}.")
-                
-                # Add the distribution object to the json_obj
-                json_obj.setdefault("distribution", []).append(distribution_obj)
-                logging.info(f"Distribution mapped for title key {key} in row {index+1}.")
-                
-        # Remove the title keys from the JSON object
-        for key in title_keys:
+            
             del json_obj[key]
+        
+        for desc_key in description_keys.values():
+            print("key is", desc_key)
+            del json_obj[desc_key]
+        
     return json_list
                 
                 
