@@ -1,5 +1,5 @@
 collections_to_doi_lookup = {
-    "Advisory Circulars": "https://doi.org/10.21949/1530859", 
+"Advisory Circulars": "https://doi.org/10.21949/1530859", 
     "Air Quality + Sustainable Transportation Highlights": "https://doi.org/10.21949/y3r3-3y74",
     "Attitudes and Behavior Surveys": "https://doi.org/10.21949/45f6-zs20",
     "BTS Ports": "https://doi.org/10.21949/1530821",
@@ -86,7 +86,7 @@ series_to_doi_lookup = {
     "Card, Andrew": "https://doi.org/10.21949/netv-sm71",
     "Civil Aeronautics Administration Reports": "https://doi.org/10.21949/cqtp-cp64",
     "Coleman, William T., Jr.": "https://doi.org/10.21949/zpyh-yn79",
-    "Dole, Elizabeth Hanford": "https://doi.org/10.21949/d4sv-tn50",
+    "Dole, Elizabeth Hanford": "https://doi.org/10.21949/dbhc-mv55",
     "Domestic Airline Fares Consumer Report": "https://doi.org/10.21949/kbe4-vy59",
     "Federal Aviation Regulations Amendments": "https://doi.org/10.21949/x6ad-nt93",
     "Federal Aviation Regulations Final Rule": "https://doi.org/10.21949/q598-f030",
