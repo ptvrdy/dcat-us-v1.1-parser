@@ -96,24 +96,24 @@ This file contains information that is relevant to my organization, NTL. This di
 This file is where you would make adjustments to my functions and add your own. Please contact if you would like assistance adjusting this program to your needs. To ensure the program and certain functions run properly, please read each function thoroughly.  
 
 3. **distribution_quickrun.py Instructions**
-To quickly get the distribution for a large dataset, use the following instructions. 
+To quickly get the distribution for a large dataset, use the following instructions.  
 
-        1. Navigate to your dataset and open "Command Prompt".  
-        2. Change directory to that dataset's main folder (ex: `cd /d C:\source\repos\dataset_1`)  
-        3. Enter the following command to print every file in that folder to a plain .txt file. This will include files in subfolders, so that the entirity of the dataset is accounted for:  
-        `dir /s /b > filenames.txt`  
-        4. Take that entire list and paste into a plain Excel spreadsheet Values only starting with cell A1.  
-        5. Remove and rows that are folders and not files.  
-        6. In Cell B1, type "extension.distribution.title.1".  
-        7. Autofill the rest of column B by selecting cell B1 and clicking the small box in the bottom right corner of the cell to autofill.  
-        8. Double check the spreadsheet to ensure each file is accounted for and has an assigned "extension.distribution.title." + number.  
-        9. Create a CSV document in Excel and open it.  
-        10. Select column A and paste into the CSV row 2, making sure to paste using the "Transpose (T)" option. This should turn your 1 Column with X rows, in 1 row with X columns.   
-        11. Do the same with the "extension.distribution.title.1" column B into row 1 of the CSV. The "title" column should now be row 1, and the actual file names should be row 2. Save your CSV in your version in the folder of "DCAT-US Version 1.1 parser" on your computer.  
-        12. Instead of running the usual command of `python dcat-us-parser CSV_1_20241231.csv` run the command: `python distribution_quickrun.py CSV_1_20241231.csv` with the "CSV_1_20241231.csv" being the name of the CSV file you just made in command prompt.  
-        13. The program will now ask you for the DOI of the dataset. Provide the DOI in the command prompt terminal.  
-        14. The program will now generate the DCAT-US "distribution" field. Ensure it looks correct and that all file types are accounted for before proceeding. Upon being prompted, type "y" to verify that the information looks correct if it is correct.  
-        15. The program will print "Done!" and provide you with a JSON file with only the DCAT-US "distribution" field for you to put into another DCAT-US JSON file.  
+    1. Navigate to your dataset and open "Command Prompt"  
+    2. Change directory to that dataset's main folder (ex: `cd /d C:\source\repos\dataset_1`)  
+    3. Enter the following command to print every file in that folder to a plain .txt file. This will include files in subfolders, so that the entirity of the dataset is accounted for: 
+    `dir /s /b > filenames.txt`  
+    4. Take that entire list and paste into a plain Excel spreadsheet Values only starting with cell A1.  
+    5. Remove and rows that are folders and not files.  
+    6. In Cell B1, type "extension.distribution.title.1".  
+    7. Autofill the rest of column B by selecting cell B1 and clicking the small box in the bottom right corner of the cell to autofill.  
+    8. Double check the spreadsheet to ensure each file is accounted for and has an assigned "extension.distribution.title." + number.  
+    9. Create a CSV document in Excel and open it.  
+    10. Select column A and paste into the CSV row 2, making sure to paste using the "Transpose (T)" option. This should turn your 1 Column with X rows, in 1 row with X columns.   
+    11. Do the same with the "extension.distribution.title.1" column B into row 1 of the CSV. The "title" column should now be row 1, and the actual file names should be row 2. Save your CSV in your version in the folder of "DCAT-US Version 1.1 parser" on your computer.  
+    12. Instead of running the usual command of `python dcat-us-parser CSV_1_20241231.csv` run the command: `python distribution_quickrun.py CSV_1_20241231.csv` with the "CSV_1_20241231.csv" being the name of the CSV file you just made in command prompt.  
+    13. The program will now ask you for the DOI of the dataset. Provide the DOI in the command prompt terminal.  
+    14. The program will now generate the DCAT-US "distribution" field. Ensure it looks correct and that all file types are accounted for before proceeding. Upon being prompted, type "y" to verify that the information looks correct if it is correct.  
+    15. The program will print "Done!" and provide you with a JSON file with only the DCAT-US "distribution" field for you to put into another DCAT-US JSON file.  
 
 
 ## F. Update Log  
