@@ -53,7 +53,7 @@ File List for doi-parser
 >  1. Filename: `Templates`  
 >  Short Description:  This folder contains a blank DCAT-US version 1 template.    
 
->  2. Filename: `collections_and_series.py`  
+>  2. Filename: `collections_and_file_types.py`  
 >  Short Description:  This file contains the National Transportation Library ROSA P Repository's series and collections DOIs (Digital Object Identifiers).  
 
 >  3. Filename: `dcat-us-parser.py`   
@@ -68,6 +68,12 @@ File List for doi-parser
 >  6. Filename: `README.md`  
 >  Short Description:  This file is the README file you are reading now. It contains helpful background information about the program its function.  
 
+>  7. Filename: `_start.bat`  
+>  Short Description:  This file is a batch file that functions as a quick start for the program. Edit the file in your chosen file editor, such as VS Code, to navigate to the file path of where this program is located on your computer. This file eliminates the change directory/CD step in command prompt for quicker use.   
+
+>  8. Filename: `distribution_quickrun.py`  
+>  Short Description:  In the DCAT-US version 1 schema, the field "distribution" is a complicated field meant to describe each file in the dataset. This includes the file's title, IANA media type, file type, a description, an access URL, and the default ""@type": "dcat:Distribution"," for each file. This function is designed to take a CSV full of only file titles and map the rest of the values with default values. This is especially useful for when you have a DCAT-US file prepared for publication, but the distribution is not feasible for a human to complete in a reasonable time frame (ex: a dataset with 1000+ files). For more detailed instructions, read "distribution_quickrun.py instructions" in Section E. "File Specific Information."  
+
 ## D. Software Information  
 
 **Instrument or software-specific information needed to interpret the data:** This software is best run through command prompt. It is best edited with Visual Studio Code. Microsoft Excel was used to create the CSV files. To run this software, open the command prompt and navigate to the folder that contains this program. Then, type the following command:  
@@ -79,17 +85,40 @@ File List for doi-parser
 python dcat-us-parser CSV_1_20241231.csv
 ```   
 
+*Note: Edit the `_start.bat` file to where your program is stored to make the bat file a quick start button with no changing directories necessary.*
 
 ## E. File Specific Information  
 
-1. **collections_and_series.py**  
-This file contains information that is relevant to my organization, NTL. This dictionary should be changed with values that are relevant to your institution.  
+1. **collections_and_file_types.py**  
+This file contains information that is relevant to my organization, NTL. This dictionary should be changed with values that are relevant to your institution. For the constant values to work properly, change the collection and series DOIs and ensure that your file type is included in the "extension_metadata" dictionary. The program will pull an error if your file type is not accounted for.  
 
 2. **processing_columns.py**  
-This file is where you would make adjustments to my functions and add your own. Please contact if you would like assistance adjusting this program to your needs.  
+This file is where you would make adjustments to my functions and add your own. Please contact if you would like assistance adjusting this program to your needs. To ensure the program and certain functions run properly, please read each function thoroughly.  
+
+3. **distribution_quickrun.py Instructions**
+To quickly get the distribution for a large dataset, use the following instructions. 
+
+        1. Navigate to your dataset and open "Command Prompt".  
+        2. Change directory to that dataset's main folder (ex: `cd /d C:\source\repos\dataset_1`)  
+        3. Enter the following command to print every file in that folder to a plain .txt file. This will include files in subfolders, so that the entirity of the dataset is accounted for:  
+        `dir /s /b > filenames.txt`  
+        4. Take that entire list and paste into a plain Excel spreadsheet Values only starting with cell A1.  
+        5. Remove and rows that are folders and not files.  
+        6. In Cell B1, type "extension.distribution.title.1".  
+        7. Autofill the rest of column B by selecting cell B1 and clicking the small box in the bottom right corner of the cell to autofill.  
+        8. Double check the spreadsheet to ensure each file is accounted for and has an assigned "extension.distribution.title." + number.  
+        9. Create a CSV document in Excel and open it.  
+        10. Select column A and paste into the CSV row 2, making sure to paste using the "Transpose (T)" option. This should turn your 1 Column with X rows, in 1 row with X columns.   
+        11. Do the same with the "extension.distribution.title.1" column B into row 1 of the CSV. The "title" column should now be row 1, and the actual file names should be row 2. Save your CSV in your version in the folder of "DCAT-US Version 1.1 parser" on your computer.  
+        12. Instead of running the usual command of `python dcat-us-parser CSV_1_20241231.csv` run the command: `python distribution_quickrun.py CSV_1_20241231.csv` with the "CSV_1_20241231.csv" being the name of the CSV file you just made in command prompt.  
+        13. The program will now ask you for the DOI of the dataset. Provide the DOI in the command prompt terminal.  
+        14. The program will now generate the DCAT-US "distribution" field. Ensure it looks correct and that all file types are accounted for before proceeding. Upon being prompted, type "y" to verify that the information looks correct if it is correct.  
+        15. The program will print "Done!" and provide you with a JSON file with only the DCAT-US "distribution" field for you to put into another DCAT-US JSON file.  
+
 
 ## F. Update Log  
 
 This README.md file was originally created on 2024-12-09 by Peyton Tvrdy ([0000-0002-9720-4725](https://orcid.org/0000-0002-9720-4725)), Data Management and Data Curation Fellow, National Transportation Library <peyton.tvrdy.ctr@dot.gov>  
  
 2024-12-09: Project Launch and README created  
+2025-01-06: Small edits to file descriptions, 1 file name change
