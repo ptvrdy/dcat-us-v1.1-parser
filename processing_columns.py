@@ -3,9 +3,9 @@ from collections_and_file_types import (
     series_to_doi_lookup,
     extension_metadata
 )
-
 import json
 import logging
+import mimetypes
 import re
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] %(message)s"
@@ -232,8 +232,11 @@ def distribution(json_list):
     title_pattern = re.compile(r"extension\.distribution\.title\.(\d+)")
     description_pattern = re.compile(r"extension\.distribution\.description\.(\d+)")
     
-    # Collect keys matching the pattern
+    # Load the file_definitions.json file into a python dictionary
+    with open("file_definitions.json", "r", encoding="utf-8") as f:
+        file_definitions = json.load(f)
     
+    # Collect keys matching the pattern
     for index, json_obj in enumerate(json_list):
         parsed_doi = json_obj["identifier"]
         title_keys = [key for key in json_obj.keys() if title_pattern.match(key)]
@@ -245,35 +248,48 @@ def distribution(json_list):
                 distribution_index = match.group(1)  # Extract the number after 'title.'
                 title = json_obj[key]  # Get the file name
                 
+                # Gets the file type
                 extension = title.split(".")[-1].lower()
                 
-                metadata = extension_metadata.get(extension)
-                if metadata:
-                    distribution_obj = {
-                        "@type": "dcat:Distribution",
-                        "accessURL": parsed_doi,
-                        "description": metadata["defaultDescription"], 
-                        "format": metadata["format"],
-                        "mediaType": metadata["mediaType"],
-                        "title": title,
-                    }
+                # Retrieves IANA Media Type using the mimetypes Python Library
+                media_type, encoding = mimetypes.guess_type(title.lower().strip(), strict=False)
+                formatType = extension.upper()
                 
-                    # Check if description in CSV
-                    description_key = description_keys.get(distribution_index)
-                    if description_key and json_obj.get(description_key): # "extension.description.${description_key}"
-                        print("description key is !! ", description_key, json_obj.get(description_key))
-                        distribution_obj["description"] = json_obj[description_key]
-                    
-                    # Adding distribution from spreadsheet
-                    json_obj.setdefault("distribution", []).append(distribution_obj)
-                    logging.info(f"Distribution mapped for title key {key} in row {index + 1}.")
+                # If the IANA Media Type Returns Null/None from the python library, use the dictionary in collections_and_file_types.py's extension_metadata
+                if media_type is None:
+                    media_type = extension_metadata[extension]["mediaType"]
+                
+                # This creates the distribution object
+                distribution_obj = {
+                    "@type": "dcat:Distribution",
+                    "accessURL": parsed_doi,
+                    "description": "", 
+                    "format": formatType,
+                    "mediaType": media_type,
+                    "title": title,
+                }
+                
+                # Get the description from file_definitions.json based off the extension
+                if extension in file_definitions:
+                    distribution_obj["description"] = file_definitions[extension]
                 else:
-                    logging.warn(f"Format not mapped for {title}.")
+                    logging.warning(f"No description found for extension: {extension}")
+            
+                # Check if description in CSV
+                description_key = description_keys.get(distribution_index)
+                if description_key and json_obj.get(description_key): # "extension.description.${description_key}"
+                    distribution_obj["description"] = json_obj[description_key]
+                
+                # Adding distribution from spreadsheet
+                json_obj.setdefault("distribution", []).append(distribution_obj)
+                logging.info(f"Distribution mapped for title key {key} in row {index + 1}.")
+            else:
+                logging.warning(f"Format not mapped for {title}.")
             
             del json_obj[key]
         
+        # Gets rid of the extra keys so they don't appear in the final JSON file
         for desc_key in description_keys.values():
-            print("key is", desc_key)
             del json_obj[desc_key]
         
     return json_list
