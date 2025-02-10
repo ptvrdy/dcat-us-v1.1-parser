@@ -19,3 +19,17 @@ DCAT-US_Metadata_102320.json
 AirCarrierStats_Uncataloged.csv
 AirCarrierStats_Uncataloged.log
 AirCarrierStats_Uncataloged.xlsx
+Quickrun_UTC.xlsx
+Quickrun_UTC.csv
+Quickrun_UTC.log
+Test_full_program_without_definitions.csv
+Test_full_program_without_definitions.log
+Test_full_program.csv
+Test_full_program.log
+/__pycache__
+__pycache__/collections_and_file_types.cpython-312.pyc
+__pycache__/collections_and_file_types.cpython-313.pyc
+__pycache__/processing_columns.cpython-313.pyc
+__pycache__/processing_columns.cpython-312.pyc
+__pycache__/collections_and_file_types.cpython-312.pyc
+__pycache__/processing_columns.cpython-312.pyc
