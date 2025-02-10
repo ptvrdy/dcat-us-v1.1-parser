@@ -2,8 +2,12 @@ import codecs
 import csv
 import json
 import logging
+import mimetypes
 import re
 import sys
+from collections_and_file_types import (
+    extension_metadata
+)
 
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.WARN)
@@ -72,6 +76,7 @@ def main():
         logging.info(f"====> Starting File Reader: {sys.argv[1]}")
         print(f"\n\n====> Starting File Reader: {sys.argv[1]}")
         
+        # Reading the CSV
         with open(sys.argv[1], 'r', encoding='utf-8') as fp:
             csv_reader = csv.reader(fp)
             output = csv_to_json(csv_reader)
@@ -94,7 +99,6 @@ def main():
         # Loop through each row and create a separate JSON file for each
         i = 0
         for obj in output:  # Iterate over the output directly
-            print(obj)
             title = "Untitled" + str(i)  # Use "Untitled" if there's no title field
             title_safe = title.replace(" ", "_").replace("/", "_").replace("\\", "_")  # Clean the title for filenames
 
@@ -123,6 +127,10 @@ def distribution(json_list):
     for index, json_obj in enumerate(json_list):
         identifier = input(f"\n====> What is the DOI for the dataset?: ")
         
+        # Load the file_definitions.json file into a python dictionary
+        with open("file_definitions.json", "r", encoding="utf-8") as f:
+            file_definitions = json.load(f)
+        
         # Regex pattern to match the title keys
         title_pattern = re.compile(r"extension\.distribution\.title\.(\d+)")
         
@@ -132,84 +140,40 @@ def distribution(json_list):
         for key in title_keys:
             match = title_pattern.match(key)
             if match:
-                distribution_index = match.group(1)  # Extract the number after 'title.'
                 title = json_obj[key]  # Get the file name
                 
-                # Create a distribution object
+                # Get file format
+                extension = title.split(".")[-1].lower()
+                
+                # Retrieves IANA Media Type using the mimetypes Python Library
+                media_type, encoding = mimetypes.guess_type(title.lower().strip(), strict=False)
+                formatType = extension.upper()
+                
+                # If the IANA Media Type Returns Null/None from the python library, use the dictionary in collections_and_file_types.py's extension_metadata
+                if media_type is None:
+                    media_type = extension_metadata[extension]["mediaType"]
+                
+                # This creates the distribution object
                 distribution_obj = {
                     "@type": "dcat:Distribution",
                     "accessURL": identifier,
+                    "description": "", 
+                    "format": formatType,
+                    "mediaType": media_type,
                     "title": title,
                 }
                 
-                # Extract the file extension and assign metadata
-                extension = title.split(".")[-1].lower()
-                if extension == "csv":
-                    distribution_obj["format"] = "CSV"
-                    distribution_obj["mediaType"] = "text/csv"
-                    distribution_obj["description"] = "CSV dataset file."
-                elif extension == "txt":
-                    distribution_obj["format"] = "TXT"
-                    distribution_obj["mediaType"] = "text/plain"
-                    distribution_obj["description"] = "Plain text file."
-                elif extension == "pdf":
-                    distribution_obj["format"] = "PDF"
-                    distribution_obj["mediaType"] = "application/pdf"
-                    distribution_obj["description"] = "PDF files for dataset."
-                elif extension == "xlsx":
-                    distribution_obj["format"] = "XLSX"
-                    distribution_obj["mediaType"] = "application/vnd.ms-excel"
-                    distribution_obj["description"] = "XLSX dataset files for the project."
-                elif extension == "md":
-                    distribution_obj["format"] = "MD"
-                    distribution_obj["mediaType"] = "text/markdown"
-                    distribution_obj["description"] = "Markdown documentation file for the dataset."
-                elif extension == "pptx":
-                    distribution_obj["format"] = "PPTX"
-                    distribution_obj["mediaType"] = "application/vnd.ms-powerpoint"
-                    distribution_obj["description"] = "PowerPoint file for the project."
-                elif extension == "docx":
-                    distribution_obj["format"] = "DOCX"
-                    distribution_obj["mediaType"] = "application/msword"
-                    distribution_obj["description"] = "Microsoft Word documentation file for the dataset."
-                elif extension == "cpg":
-                    distribution_obj["format"] = "CPG"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "GIS project component file."
-                elif extension == "dbf":
-                    distribution_obj["format"] = "DBF"
-                    distribution_obj["mediaType"] = "application/dbf"
-                    distribution_obj["description"] = "GIS project component file."
-                elif extension == "prj":
-                    distribution_obj["format"] = "PRJ"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file contains projection information for GIS datasets."
-                elif extension == "sbn":
-                    distribution_obj["format"] = "SBN"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file is associated with spatial index files for Esri shapefiles."
-                elif extension == "sbx":
-                    distribution_obj["format"] = "SBX"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file is associated with spatial index files for Esri shapefiles."
-                elif extension == "shp":
-                    distribution_obj["format"] = "SHP"
-                    distribution_obj["mediaType"] = "application/x-esri-shapefile"
-                    distribution_obj["description"] = "This file represents the actual geometries of a shapefile dataset."
-                elif extension == "shx":
-                    distribution_obj["format"] = "SHX"
-                    distribution_obj["mediaType"] = "application/octet-stream"
-                    distribution_obj["description"] = "This file is associated with spatial index files for Esri shapefiles."
-                elif extension == "xml":
-                    distribution_obj["format"] = "XML"
-                    distribution_obj["mediaType"] = "test/xml"
-                    distribution_obj["description"] = "This file contains information about the dataset."
+                # Get the description from file_definitions.json based off the extension
+                if extension in file_definitions:
+                    distribution_obj["description"] = file_definitions[extension]
                 else:
-                    logging.warn(f"Format not mapped for {title}.")
-                
+                    logging.warning(f"No description found for extension: {extension}")
+                             
                 # Add the distribution object to the json_obj
                 json_obj.setdefault("distribution", []).append(distribution_obj)
                 logging.info(f"Distribution mapped for title key {key} in row {index+1}.")
+            else:
+                logging.warning(f"Format not mapped for {title}.")
                 
         # Remove the title keys from the JSON object
         for key in title_keys:
