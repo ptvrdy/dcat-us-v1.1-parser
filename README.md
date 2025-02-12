@@ -38,6 +38,8 @@ F. [Update Log](#f-update-log)
 >  Name: Joseph Lambeth  
 >  Email: josephwlambeth@gmail.com  
 
+**For more in-depth information about the program and how to use it, view the [Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).**
+
 ## B. Sharing/Access and Policies Information  
 
 **Recommended citation for the data:**  
@@ -74,6 +76,23 @@ File List for doi-parser
 >  8. Filename: `distribution_quickrun.py`  
 >  Short Description:  In the DCAT-US version 1 schema, the field "distribution" is a complicated field meant to describe each file in the dataset. This includes the file's title, IANA media type, file type, a description, an access URL, and the default ""@type": "dcat:Distribution"," for each file. This function is designed to take a CSV full of only file titles and map the rest of the values with default values. This is especially useful for when you have a DCAT-US file prepared for publication, but the distribution is not feasible for a human to complete in a reasonable time frame (ex: a dataset with 1000+ files). For more detailed instructions, read "distribution_quickrun.py instructions" in Section E. "File Specific Information."  
 
+>  9. Filename: `file_definitions.json`
+>  Short Description:  This file contains all the definitions from the [File Formats Dictionary LibGuide](https://transportation.libguides.com/researchdatamanagement/fileformatdictionary). It is structured in the JSON format and converted into a python dictionary by the program. It is created through the scrape.py file.  
+
+>  10. Filename: `run_definitions_update.bat`
+>  Short Description:  This file is a Windows Bat file that runs 'update_definitions.sh.' Once configured to your local instance, it offers a "one-click solution" to easily update 'file_definitions.json' if there have been any updates to the [File Formats Dictionary LibGuide](https://transportation.libguides.com/researchdatamanagement/fileformatdictionary).   
+
+>  11. Filename: `scrape.py`
+>  Short Description:  This python file scrapes [File Formats Dictionary LibGuide](https://transportation.libguides.com/researchdatamanagement/fileformatdictionary) and saves it as a JSON object called file_definitions.json.  
+
+>  12. Filename: `update_definitions.sh`
+>  Short Description:  This file runs scrape.py and creates a new, temporary file_definions.json file. If there have been any changes or additions to the [File Formats Dictionary LibGuide](https://transportation.libguides.com/researchdatamanagement/fileformatdictionary), it saves the new file as file_definitions.json, overwriting the original. Then it updates the GitHub repository with the new file_definitions.json file.  
+
+>  13. Filename: `file_cleaup.py`
+>  Short Description:  This file cleans up filename.txt files that were created in command prompt using the command "dir /s > filenames.txt." These files contain directory information, folder information, and every file name and path of the dataset package.  
+
+**For more in-depth information about the program and how to use it, view the [Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).**
+
 ## D. Software Information  
 
 **Instrument or software-specific information needed to interpret the data:** This software is best run through command prompt. It is best edited with Visual Studio Code. Microsoft Excel was used to create the CSV files. To run this software, open the command prompt and navigate to the folder that contains this program. Then, type the following command:  
@@ -86,6 +105,8 @@ python dcat-us-parser CSV_1_20241231.csv
 ```   
 
 *Note: Edit the `_start.bat` file to where your program is stored to make the bat file a quick start button with no changing directories necessary.*
+
+**For more in-depth information about the program and how to use it, view the [Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).**
 
 ## E. File Specific Information  
 
@@ -115,6 +136,7 @@ To quickly get the distribution for a large dataset, use the following instructi
     14. The program will now generate the DCAT-US "distribution" field. Ensure it looks correct and that all file types are accounted for before proceeding. Upon being prompted, type "y" to verify that the information looks correct if it is correct.  
     15. The program will print "Done!" and provide you with a JSON file with only the DCAT-US "distribution" field for you to put into another DCAT-US JSON file.  
 
+**For more in-depth information about the program and how to use it, view the [Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).**
 
 ## F. Update Log  
 
@@ -122,3 +144,4 @@ This README.md file was originally created on 2024-12-09 by Peyton Tvrdy ([0000-
  
 2024-12-09: Project Launch and README created  
 2025-01-06: Small edits to file descriptions, 1 file name change
+2025-02-12: New programs (scrape,py, file_cleanup.py, file_definitions.json, and other files added. Added **[Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).** Adjusted the README to include new files and functions. 
