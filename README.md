@@ -143,5 +143,9 @@ To quickly get the distribution for a large dataset, use the following instructi
 This README.md file was originally created on 2024-12-09 by Peyton Tvrdy ([0000-0002-9720-4725](https://orcid.org/0000-0002-9720-4725)), Data Management and Data Curation Fellow, National Transportation Library <peyton.tvrdy.ctr@dot.gov>  
  
 2024-12-09: Project Launch and README created  
+<<<<<<< HEAD
 2025-01-06: Small edits to file descriptions, 1 file name change  
+=======
+2025-01-06: Small edits to file descriptions, 1 file name change
+>>>>>>> 096345cf9339b3cd78ddfac0bff045fce87ed5aa
 2025-02-12: New programs (scrape,py, file_cleanup.py, file_definitions.json, and other files added. Added **[Repository's Wiki](https://github.com/ptvrdy/dcat-us-v1.1-parser/wiki).** Adjusted the README to include new files and functions. 
