@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to the project directory
-cd "C:\source\repos\dcat-us-v1.1-parser"
+cd "C:\source\repos\Code Repos\dcat-us-v1.1-parser"
 
 # Run the Python script to update file_definitions.json
 python scrape.py
