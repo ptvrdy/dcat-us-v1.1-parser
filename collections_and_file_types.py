@@ -111,6 +111,7 @@ series_to_doi_lookup = {
     "What Do Americans Think About Federal Tax Options to Support Transportation?": "https://doi.org/10.21949/1531029",
 }
 extension_metadata = {
+    "cae": {"mediaType": "application/vnd.abaqus.cae"},
     "cpg": {"mediaType": "application/octet-stream"},
     "csv": {"mediaType": "text/csv"},
     "dbf": {"mediaType": "application/dbf"},
