@@ -151,7 +151,10 @@ def distribution(json_list):
                 
                 # If the IANA Media Type Returns Null/None from the python library, use the dictionary in collections_and_file_types.py's extension_metadata
                 if media_type is None:
-                    media_type = extension_metadata[extension]["mediaType"]
+                    if extension not in extension_metadata:
+                        print(f"Extension {extension} not found in dictionary.")
+                    else:
+                        media_type = extension_metadata[extension]["mediaType"]
                 
                 # This creates the distribution object
                 distribution_obj = {
